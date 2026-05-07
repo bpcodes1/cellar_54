@@ -20,7 +20,7 @@ export default function Nav() {
       </a>
 
       <ul className="nav-links">
-        <li><a href="#space">The Space</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}#space`}>The Space</a></li>
         <li><Link to="/booking" className="nav-cta">Book Now</Link></li>
       </ul>
 
@@ -34,7 +34,7 @@ export default function Nav() {
 
       {menuOpen && (
         <div className="nav-mobile-menu">
-          <a href="#space" onClick={closeMenu}>The Space</a>
+          <a href={`${import.meta.env.BASE_URL}#space`} onClick={closeMenu}>The Space</a>
           <Link to="/booking" className="nav-cta" onClick={closeMenu}>Book Now</Link>
         </div>
       )}
