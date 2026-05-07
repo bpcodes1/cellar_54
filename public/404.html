@@ -4,13 +4,14 @@
     <meta charset="utf-8" />
     <title>Cellar 54</title>
     <script>
-      // SPA redirect for GitHub Pages — preserves the path across a 404
       var segmentCount = 1;
       var l = window.location;
+      var pathParts = l.pathname.split('/').filter(Boolean);
+      var basePath = '/' + pathParts.slice(0, segmentCount).join('/');
+      var restPath = pathParts.slice(segmentCount).join('/');
       l.replace(
-        l.protocol + '//' + l.host + '/' +
-        l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' +
-        l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') +
+        l.protocol + '//' + l.host + basePath +
+        '/?p=' + restPath.replace(/&/g, '~and~') +
         (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
         l.hash
       );

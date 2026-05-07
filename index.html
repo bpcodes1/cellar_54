@@ -7,14 +7,15 @@
       // Restore path redirected via 404.html for GitHub Pages SPA routing
       (function(l) {
         if (l.search[1] === 'p') {
-          var decoded = l.search.slice(1).split('&').map(function(s) {
-            return s.replace(/~and~/g, '&');
+          var params = {};
+          l.search.slice(1).split('&').forEach(function(part) {
+            var eq = part.indexOf('=');
+            params[part.slice(0, eq)] = part.slice(eq + 1).replace(/~and~/g, '&');
           });
-          var path = decoded[0].slice(2);
-          var query = decoded[1] ? '?' + decoded[1].slice(2) : '';
-          window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + (path ? '/' + path : '/') + query + l.hash
-          );
+          var path = params.p ? '/' + params.p : '/';
+          var query = params.q ? '?' + params.q : '';
+          var base = l.pathname.replace(/\/$/, '');
+          window.history.replaceState(null, null, base + path + query + l.hash);
         }
       }(window.location));
     </script>
