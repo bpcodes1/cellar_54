@@ -15,7 +15,7 @@ export default function Nav() {
 
   return (
     <nav className={`${scrolled ? 'scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
-      <a className="nav-logo" href="/">
+      <a className="nav-logo" href={import.meta.env.BASE_URL}>
         <img src={`${import.meta.env.BASE_URL}cellar54-logo.webp`} alt="Cellar 54 — Entertainment & Event Venue" />
       </a>
 
