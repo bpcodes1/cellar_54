@@ -13,7 +13,7 @@ export default function Nav() {
   return (
     <nav className={scrolled ? 'scrolled' : ''}>
       <a className="nav-logo" href="/">
-        <img src="/cellar54-logo.webp" alt="Cellar 54 — Entertainment & Event Venue" />
+        <img src={`${import.meta.env.BASE_URL}cellar54-logo.webp`} alt="Cellar 54 — Entertainment & Event Venue" />
       </a>
       <ul className="nav-links">
         <li><a href="#space">The Space</a></li>

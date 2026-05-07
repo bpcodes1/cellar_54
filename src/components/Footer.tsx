@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="footer-inner">
         <div className="footer-top">
           <div>
-            <img src="/cellar54-logo.webp" alt="Cellar 54" className="footer-logo" />
+            <img src={`${import.meta.env.BASE_URL}cellar54-logo.webp`} alt="Cellar 54" className="footer-logo" />
             <p className="footer-brand-desc">Built beneath The Forge in downtown Salem. Moody. Modern. Entirely yours.</p>
           </div>
           <div>

@@ -21,7 +21,7 @@ const handleDateSelect = (date: string) => {
         <div className="bp-hero-bg" />
         <div className="bp-hero-overlay" />
         <div className="bp-hero-content">
-          <img src="/cellar54-logo.webp" alt="Cellar 54" className="bp-logo" />
+          <img src={`${import.meta.env.BASE_URL}cellar54-logo.webp`} alt="Cellar 54" className="bp-logo" />
           <p className="bp-hero-tagline">Check availability. Claim your date.</p>
           <a href="#cal-section" className="bp-scroll-cue">
             <span>View Calendar</span>
