@@ -1,0 +1,251 @@
+================================================================
+          WEBSITE INTEGRATION - CLIENT SETUP WALKTHROUGH
+================================================================
+  Use this guide to walk your client through each platform
+  step by step during your onboarding call.
+================================================================
+
+
+----------------------------------------------------------------
+ STEP 1: GOOGLE CALENDAR API
+ Link: console.cloud.google.com
+----------------------------------------------------------------
+
+BEFORE STARTING:
+  -> Make sure client is logged into the correct Google account
+     that owns the calendar they want to connect to the website.
+
+WALKTHROUGH:
+  1. Go to console.cloud.google.com
+  2. Click "Create Project" (top of page or via the project dropdown)
+     -> Give it a name (e.g. "Client Website")
+     -> Click Create
+
+  3. Enable the Google Calendar API
+     -> Left menu: APIs & Services > Library
+     -> Search "Google Calendar API"
+     -> Click it > Click "Enable"
+
+  4. Create Credentials
+     -> Left menu: APIs & Services > Credentials
+     -> Click "Create Credentials" > Choose "OAuth 2.0 Client ID"
+     -> Configure the consent screen if prompted (External > fill in
+        app name and email)
+     -> Application type: Web Application
+     -> Click Create
+     -> COPY AND SAVE: Client ID and Client Secret
+
+  5. Get the Calendar ID
+     -> Open Google Calendar (calendar.google.com)
+     -> Click the three dots next to the calendar you want to use
+     -> Settings > Scroll down to "Integrate Calendar"
+     -> COPY AND SAVE: Calendar ID
+        (looks like: abc123@group.calendar.google.com)
+
+  ITEMS TO COLLECT:
+  [ ] OAuth Client ID
+  [ ] OAuth Client Secret
+  [ ] Calendar ID
+
+  NOTE: A Refresh Token will be generated during development.
+  No further action needed from client at this stage.
+
+
+----------------------------------------------------------------
+ STEP 2: SQUARE PAYMENTS
+ Link: developer.squareup.com
+----------------------------------------------------------------
+
+BEFORE STARTING:
+  -> Make sure client is logged into their Square business account.
+  -> If they don't have one: squareup.com > Sign Up
+
+WALKTHROUGH:
+  1. Go to developer.squareup.com
+  2. Click "Get Started" or log in with their Square account
+  3. Click "Create Your First Application"
+     -> Give it a name (e.g. "Client Website")
+     -> Click Save
+
+  4. Get Credentials
+     -> Click on the application you just created
+     -> Go to the "Credentials" tab
+     -> COPY AND SAVE: Application ID
+     -> COPY AND SAVE: Sandbox Access Token (for testing)
+     -> COPY AND SAVE: Production Access Token (for go-live)
+
+  5. Get Location ID
+     -> In the left menu click "Locations"
+     -> COPY AND SAVE: Location ID for their business location
+
+  6. Set Up Webhook (if needed for payment confirmations)
+     -> Left menu: Webhooks
+     -> Click "Add Webhook"
+     -> COPY AND SAVE: Webhook Signature Key
+
+  ITEMS TO COLLECT:
+  [ ] Application ID
+  [ ] Sandbox Access Token
+  [ ] Production Access Token
+  [ ] Location ID
+  [ ] Webhook Signature Key (if applicable)
+
+  NOTE: We will test all payments using Sandbox credentials first.
+  Production tokens will not be used until the site is fully tested.
+
+
+----------------------------------------------------------------
+ STEP 3: CLOUDFLARE (DOMAIN SETUP)
+ Domain is currently registered at: account.squarespace.com
+----------------------------------------------------------------
+
+  ** CHOOSE ONE OPTION BELOW **
+
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  OPTION A: Add Domain to Developer's Cloudflare Account
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Use this if the developer will manage everything under
+  their own Cloudflare account.
+
+  WALKTHROUGH:
+  1. Developer logs into their Cloudflare account
+     -> dash.cloudflare.com
+
+  2. Click "Add a Site"
+     -> Enter the client's domain name
+     -> Select the Free plan
+     -> Cloudflare will scan existing DNS records
+     -> Click Continue
+
+  3. Cloudflare will provide 2 custom nameservers, e.g.:
+        aria.ns.cloudflare.com
+        bob.ns.cloudflare.com
+     -> COPY BOTH NAMESERVERS
+
+  4. Client logs into Squarespace to update nameservers
+     -> account.squarespace.com
+     -> Click "Domains" in the left sidebar
+     -> Click on the domain
+     -> Click "DNS Settings" or "Nameservers"
+     -> Switch to "Custom Nameservers"
+     -> Paste in both Cloudflare nameservers
+     -> Save
+
+  5. Back in Cloudflare, note the Zone ID
+     -> Dashboard > Select the domain > Overview page (right side)
+     -> COPY AND SAVE: Zone ID
+
+  6. Create an API Token (recommended)
+     -> Cloudflare > My Profile > API Tokens > Create Token
+     -> Use the "Edit Zone DNS" template
+     -> COPY AND SAVE: API Token
+
+  ITEMS TO COLLECT:
+  [ ] Nameservers updated in Squarespace
+  [ ] Zone ID
+  [ ] API Token
+
+  NOTE: Nameserver propagation takes approximately 24-48 hours.
+  Domain will live under the developer's account.
+
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  OPTION B: Client Creates Their Own Cloudflare Account
+  (Recommended — Client owns their domain and assets)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Use this so the client owns their Cloudflare account and
+  the developer is added as a member with full access.
+
+  WALKTHROUGH:
+  1. Client creates a free Cloudflare account
+     -> dash.cloudflare.com/sign-up
+     -> Sign up with their business email
+     -> Verify email if prompted
+
+  2. Click "Add a Site"
+     -> Enter their domain name
+     -> Select the Free plan
+     -> Cloudflare will scan existing DNS records
+     -> Click Continue
+
+  3. Cloudflare will provide 2 custom nameservers, e.g.:
+        aria.ns.cloudflare.com
+        bob.ns.cloudflare.com
+     -> COPY BOTH NAMESERVERS
+
+  4. Client logs into Squarespace to update nameservers
+     -> account.squarespace.com
+     -> Click "Domains" in the left sidebar
+     -> Click on the domain
+     -> Click "DNS Settings" or "Nameservers"
+     -> Switch to "Custom Nameservers"
+     -> Paste in both Cloudflare nameservers
+     -> Save
+
+  5. Client adds developer as a Member
+     -> dash.cloudflare.com/profile/members
+     -> Click "Invite Member"
+     -> Enter developer's email address
+     -> Set role to "Administrator"
+     -> Send Invite
+
+  6. Note the Zone ID
+     -> Dashboard > Select the domain > Overview page (right side)
+     -> COPY AND SAVE: Zone ID
+
+  7. Create an API Token (recommended)
+     -> Cloudflare > My Profile > API Tokens > Create Token
+     -> Use the "Edit Zone DNS" template
+     -> COPY AND SAVE: API Token
+
+  ITEMS TO COLLECT:
+  [ ] Cloudflare account created
+  [ ] Domain added to Cloudflare
+  [ ] Nameservers updated in Squarespace
+  [ ] Developer added as Administrator member
+  [ ] Zone ID
+  [ ] API Token
+
+  NOTE: Nameserver propagation takes approximately 24-48 hours.
+  Client owns their account and all assets. Developer has full
+  access to manage and deploy the website.
+
+
+----------------------------------------------------------------
+ HOW TO VERIFY NAMESERVERS UPDATED CORRECTLY
+----------------------------------------------------------------
+  1. Go to dnschecker.org
+  2. Enter the domain name
+  3. Select "NS" from the dropdown
+  4. Results should show Cloudflare nameservers
+     (ending in .ns.cloudflare.com) across all locations
+  5. Cloudflare dashboard will show status as "Active" once
+     propagation is complete (can take up to 24-48 hours)
+
+
+----------------------------------------------------------------
+ QUICK REFERENCE — ALL LINKS
+----------------------------------------------------------------
+
+  Platform                  | Link
+  --------------------------|----------------------------------
+  Google Cloud Console      | console.cloud.google.com
+  Square Developer Dashboard| developer.squareup.com
+  Squarespace (Nameservers) | account.squarespace.com
+  Cloudflare Sign Up        | dash.cloudflare.com/sign-up
+  Cloudflare Members        | dash.cloudflare.com/profile/members
+  DNS Checker (Verify)      | dnschecker.org
+
+
+----------------------------------------------------------------
+ IMPORTANT SECURITY NOTES
+----------------------------------------------------------------
+  * Never share credentials over email or plain text messages.
+  * Use a password manager (e.g. 1Password) to store and share
+    all keys and tokens securely.
+  * Production Square tokens should not be used until the site
+    is fully tested with Sandbox credentials first.
+  * Keep OAuth Client Secret and API Tokens private at all times.
+
+================================================================
+                        END OF WALKTHROUGH
+================================================================

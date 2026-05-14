@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom'
 import logoOutline from '../assets/Cellar54_images/Cellar54-logo-outline.webp'
 
 export default function Hero() {
+  const navigate = useNavigate()
   return (
     <div className="hero">
       <div className="hero-bg" />
@@ -17,7 +19,7 @@ export default function Hero() {
           4,000 sq ft of moody, modern possibility beneath The Forge. Your event. Your vendors. Your rules.
         </p>
         <div className="hero-actions">
-          <a href="#booking" className="btn-primary">Inquire Now</a>
+          <button onClick={() => navigate('/booking')} className="btn-primary">Inquire Now</button>
           <a href="#space" className="btn-ghost">Explore the Space</a>
         </div>
       </div>
