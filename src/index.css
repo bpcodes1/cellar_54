@@ -511,6 +511,30 @@ section { padding: 100px 32px; max-width: 1200px; margin: 0 auto; }
 }
 .t-dot.active { background: var(--red); }
 
+/* ─── BOOKING CTA (homepage) ─── */
+.booking-cta-wrap { background: var(--black); }
+.booking-cta-inner {
+  max-width: 1200px; margin: 0 auto;
+  padding: 100px 60px;
+  text-align: center;
+}
+.booking-cta-body {
+  color: var(--grey); font-size: 14px;
+  line-height: 1.85; margin-top: 24px;
+  max-width: 480px; margin-inline: auto;
+}
+.booking-cta-btn {
+  display: inline-block; margin-top: 40px;
+  background: var(--red); color: var(--ivory);
+  padding: 16px 48px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.22s;
+}
+.booking-cta-btn:hover { background: #c80f0d; }
+
 /* ─── BOOKING ─── */
 .booking-wrap { background: var(--black); }
 .booking-inner {
@@ -562,6 +586,19 @@ section { padding: 100px 32px; max-width: 1200px; margin: 0 auto; }
   font-size: 10px; color: var(--grey);
   letter-spacing: 0.1em; text-align: center;
 }
+.form-error {
+  font-size: 11px; color: var(--red);
+  letter-spacing: 0.05em; margin: 0;
+}
+.sq-card-input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px;
+  min-height: 48px;
+  transition: border-color 0.2s;
+}
+.booking-success { padding: 80px 0; text-align: center; }
+.booking-success p { color: var(--grey); margin-top: 16px; max-width: 480px; margin-inline: auto; }
 
 /* ─── LOCATION BAR ─── */
 .location-bar {

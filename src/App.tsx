@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, Link } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
 import { useScrollReveal } from './hooks/useScrollReveal'
 import Nav from './components/Nav'
@@ -9,7 +9,6 @@ import Events from './components/Events'
 import Gallery from './components/Gallery'
 import Amenities from './components/Amenities'
 import Testimonial from './components/Testimonial'
-import Booking from './components/Booking'
 import LocationBar from './components/LocationBar'
 import Footer from './components/Footer'
 import BookingPage from './pages/BookingPage'
@@ -27,7 +26,14 @@ function HomePage() {
       <Gallery />
       <Amenities />
       <Testimonial />
-      <Booking />
+      <div className="booking-cta-wrap">
+        <div className="booking-cta-inner">
+          <span className="section-eyebrow">Reserve Your Date</span>
+          <h2 className="section-title">Planning something <em>bold?</em></h2>
+          <p className="booking-cta-body">Check availability and secure your date with a $500 deposit — applied toward your total.</p>
+          <Link to="/booking" className="booking-cta-btn">Check Availability</Link>
+        </div>
+      </div>
       <LocationBar />
       <Footer />
     </>

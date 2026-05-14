@@ -1,23 +1,142 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, useRef, type FormEvent } from 'react'
+import { createClient } from '@supabase/supabase-js'
 
-export default function Booking() {
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+)
+
+const SQUARE_APP_ID = import.meta.env.VITE_SQUARE_APP_ID as string
+const SQUARE_LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID as string
+
+declare global {
+  interface Window {
+    Square?: {
+      payments: (appId: string, locationId: string) => {
+        card: () => Promise<{
+          attach: (selector: string) => Promise<void>
+          tokenize: () => Promise<{ status: string; token?: string; errors?: { message: string }[] }>
+          destroy: () => void
+        }>
+      }
+    }
+  }
+}
+
+interface BookingProps {
+  selectedDate?: string
+}
+
+export default function Booking({ selectedDate = '' }: BookingProps) {
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
     email: '',
     eventType: '',
     guests: '',
-    date: '',
+    date: selectedDate,
   })
+
+  useEffect(() => {
+    setForm(f => ({ ...f, date: selectedDate }))
+  }, [selectedDate])
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const cardRef = useRef<{ tokenize: () => Promise<{ status: string; token?: string; errors?: { message: string }[] }>; destroy: () => void } | null>(null)
+
+  useEffect(() => {
+    let destroyed = false
+
+    function loadSquareScript(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        if (window.Square) { resolve(); return }
+        const existing = document.querySelector('script[src*="squarecdn.com"]')
+        if (existing) {
+          existing.addEventListener('load', () => resolve())
+          existing.addEventListener('error', reject)
+          return
+        }
+        const script = document.createElement('script')
+        script.src = 'https://web.squarecdn.com/v1/square.js'
+        script.onload = () => resolve()
+        script.onerror = reject
+        document.head.appendChild(script)
+      })
+    }
+
+    async function initSquare() {
+      try {
+        await loadSquareScript()
+        if (!window.Square || destroyed) return
+        const payments = window.Square.payments(SQUARE_APP_ID, SQUARE_LOCATION_ID)
+        const card = await payments.card()
+        if (destroyed) { card.destroy(); return }
+        await card.attach('#sq-card-container')
+        cardRef.current = card
+      } catch (e) {
+        console.error('Square init failed:', e)
+      }
+    }
+
+    initSquare()
+    return () => {
+      destroyed = true
+      cardRef.current?.destroy()
+    }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    // Form submission logic goes here
-    alert('Thank you! We\'ll be in touch within 24 hours.')
+    setError(null)
+
+    if (!cardRef.current) {
+      setError('Payment form not ready. Please refresh and try again.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const result = await cardRef.current.tokenize()
+
+      if (result.status !== 'OK') {
+        setError(result.errors?.[0]?.message ?? 'Card tokenization failed.')
+        return
+      }
+
+      const { data, error: fnError } = await supabase.functions.invoke('process-payment', {
+        body: { token: result.token, ...form },
+      })
+
+      if (fnError || !data?.success) {
+        setError(data?.error ?? 'Payment failed. Please try again.')
+        return
+      }
+
+      setSuccess(true)
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (success) {
+    return (
+      <div className="booking-wrap" id="booking">
+        <div className="booking-inner">
+          <div className="booking-success reveal">
+            <span className="section-eyebrow">You&#8217;re on the books</span>
+            <h2 className="section-title">Date reserved.</h2>
+            <p>Your $500 deposit has been processed and your date is held. We&#8217;ll be in touch within 24 hours to confirm the details.</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -27,8 +146,8 @@ export default function Booking() {
           <span className="section-eyebrow">Plan Your Event</span>
           <h2 className="section-title">Planning something <em>bold?</em></h2>
           <div className="booking-body">
-            <p>Tell us a little about what you&#8217;re planning. We&#8217;ll get back to you within 24 hours to talk availability, walk you through the space, and answer every question you have.</p>
-            <p>No pressure. No packages. <strong>Just an honest conversation about whether Cellar 54 is right for your event.</strong></p>
+            <p>Reserve your date with a $500 deposit — applied toward your total. We&#8217;ll confirm availability and reach out within 24 hours.</p>
+            <p>No packages. No pressure. <strong>Just an honest conversation about whether Cellar 54 is right for your event.</strong></p>
           </div>
         </div>
         <form className="booking-form reveal d1" onSubmit={handleSubmit}>
@@ -42,6 +161,7 @@ export default function Booking() {
                 placeholder="Your name"
                 value={form.firstName}
                 onChange={handleChange}
+                required
               />
             </div>
             <div className="form-group">
@@ -53,6 +173,7 @@ export default function Booking() {
                 placeholder="Last name"
                 value={form.lastName}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -65,6 +186,7 @@ export default function Booking() {
               placeholder="your@email.com"
               value={form.email}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="form-row">
@@ -75,6 +197,7 @@ export default function Booking() {
                 name="eventType"
                 value={form.eventType}
                 onChange={handleChange}
+                required
               >
                 <option value="" disabled>Select...</option>
                 <option>Wedding / Ceremony</option>
@@ -107,8 +230,15 @@ export default function Booking() {
               onChange={handleChange}
             />
           </div>
-          <button type="submit" className="form-submit">Send My Inquiry</button>
-          <p className="form-note">We respond within 24 hours. No spam, ever.</p>
+          <div className="form-group">
+            <label className="form-label">Card Details — $500 Deposit</label>
+            <div id="sq-card-container" className="sq-card-input" />
+          </div>
+          {error && <p className="form-error">{error}</p>}
+          <button type="submit" className="form-submit" disabled={loading}>
+            {loading ? 'Processing...' : 'Reserve My Date — $500 Deposit'}
+          </button>
+          <p className="form-note">Deposit applied toward your total. Secure payment via Square. Remaining balance due prior to your event.</p>
         </form>
       </div>
     </div>

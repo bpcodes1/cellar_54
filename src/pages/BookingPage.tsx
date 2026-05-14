@@ -1,15 +1,20 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import Nav from '../components/Nav'
 import Calendar from '../components/Calendar'
+import Booking from '../components/Booking'
 import Footer from '../components/Footer'
 
 export default function BookingPage() {
   useScrollReveal()
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const bookingRef = useRef<HTMLDivElement>(null)
 
-const handleDateSelect = (date: string) => {
+  const handleDateSelect = (date: string) => {
     setSelectedDate(date)
+    setTimeout(() => {
+      bookingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
   }
 
   return (
@@ -36,10 +41,15 @@ const handleDateSelect = (date: string) => {
           <div className="bp-cal-header reveal">
             <span className="section-eyebrow">Availability</span>
             <h2 className="section-title">Find your <em>date.</em></h2>
-            <p className="bp-cal-sub">Select an available date below to begin your inquiry. Booked dates are marked — reach out if you need something special.</p>
+            <p className="bp-cal-sub">Select an available date below to begin your booking. Booked dates are marked — reach out if you need something special.</p>
           </div>
           <Calendar onSelect={handleDateSelect} selected={selectedDate} />
         </div>
+      </div>
+
+      {/* Booking Form — hidden until date selected */}
+      <div ref={bookingRef} style={{ display: selectedDate ? 'block' : 'none' }}>
+        <Booking selectedDate={selectedDate ?? ''} />
       </div>
 
       <div className="bp-divider" />
