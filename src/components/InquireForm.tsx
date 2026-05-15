@@ -38,14 +38,17 @@ export default function InquireForm() {
 
   if (success) {
     return (
-      <div className="booking-wrap">
-        <div className="booking-inner" style={{ justifyContent: 'center', textAlign: 'center' }}>
-          <div className="booking-success reveal">
+      <div className="booking-wrap" id="inquire">
+        <div className="booking-inner" style={{ alignItems: 'center' }}>
+          <div className="booking-left" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="section-eyebrow">Message Received</span>
             <h2 className="section-title">We'll be in <em>touch.</em></h2>
-            <p style={{ color: 'var(--grey)', fontSize: '14px', marginTop: '16px' }}>
-              Thank you for reaching out. Expect to hear from us within 24 hours.
-            </p>
+            <div className="booking-body">
+              <p>Thank you for reaching out. Expect to hear from us within 24 hours.</p>
+            </div>
+          </div>
+          <div className="inquire-success-logo">
+            <img src={`${import.meta.env.BASE_URL}cellar54-mark.webp`} alt="Cellar 54" />
           </div>
         </div>
       </div>
