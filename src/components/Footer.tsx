@@ -30,21 +30,21 @@ export default function Footer() {
           <div>
             <div className="footer-col-title">Connect</div>
             <ul className="footer-links">
-              <li><a href="#booking">Inquire Now</a></li>
+              <li><a href="mailto:info@cellar54salem.com">Inquire Now</a></li>
               <li><a href="#">FAQ</a></li>
-              <li><a href="#">Instagram</a></li>
-              <li><a href="#">Facebook</a></li>
+              <li><a href="https://www.instagram.com/cellar_54/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+              <li><a href="https://www.facebook.com/p/Cellar-54-61582894706553/" target="_blank" rel="noopener noreferrer">Facebook</a></li>
             </ul>
           </div>
         </div>
         <div className="footer-bottom">
-          <p className="footer-copy">&copy; 2025 Cellar 54 &middot; Downtown Salem, Oregon</p>
-          <div className="footer-forge">
+          <p className="footer-copy">&copy; 2026 Cellar 54 &middot; Downtown Salem, Oregon</p>
+          <a href="https://forgesalem.com" target="_blank" rel="noopener noreferrer" className="footer-forge">
             Part of <span className="mini-d" /> The Forge &middot; Salem
-          </div>
+          </a>
           <div className="footer-socials">
-            <a href="#">Instagram</a>
-            <a href="#">Facebook</a>
+            <a href="https://www.instagram.com/cellar_54/" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.facebook.com/p/Cellar-54-61582894706553/" target="_blank" rel="noopener noreferrer">Facebook</a>
             <a href="#">Email</a>
           </div>
         </div>

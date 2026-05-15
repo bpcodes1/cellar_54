@@ -12,9 +12,9 @@ export default function LocationBar() {
         {locations.map((loc, i) => (
           <div key={loc.label} className="location-item-wrap">
             <div className="location-item">
-              <div className="location-dot" />
-              <div>
-                <div className="location-text-label">{loc.label}</div>
+              <div className="location-text-label">{loc.label}</div>
+              <div className="location-value-row">
+                <div className="location-dot" />
                 <div className="location-text-value">{loc.value}</div>
               </div>
             </div>
