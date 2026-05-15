@@ -40,9 +40,9 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
   useEffect(() => {
     setForm(f => ({ ...f, date: selectedDate }))
   }, [selectedDate])
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [_loading, setLoading] = useState(false)
+  const [_success, setSuccess] = useState(false)
+  const [_error, setError] = useState<string | null>(null)
   const cardRef = useRef<{ tokenize: () => Promise<{ status: string; token?: string; errors?: { message: string }[] }>; destroy: () => void } | null>(null)
 
   useEffect(() => {
@@ -86,11 +86,11 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
     }
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const _handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = async (e: FormEvent) => {
+  const _handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
 
