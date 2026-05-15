@@ -1,0 +1,14 @@
+Google Calendar 
+    - Changed Access Permissions for Events, Make Available to Public (See only free/busy (hide details)) enabled.
+    - Created Cellar54 Calendar Project in console.cloud.com
+    - Enabled Google Calendar API
+    - Create API Key (Allow communication from cellar54salem calendar to google calendar)
+
+Square
+    - Got Production Variables needed to implement Payment Form
+
+CloudFlare
+    - Added contact@be-techplus.com as Administrator
+    - Created Page Project
+    - Enabled Free Plan for Domain
+    - Deleted Previous Squarespace DNS Records
