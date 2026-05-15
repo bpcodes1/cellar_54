@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, Link } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
 import { useScrollReveal } from './hooks/useScrollReveal'
 import Nav from './components/Nav'
