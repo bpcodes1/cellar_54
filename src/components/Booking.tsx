@@ -86,44 +86,44 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
     }
   }, [])
 
-  const _handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  //   setForm({ ...form, [e.target.name]: e.target.value })
+  // }
 
-  const _handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setError(null)
+  // const handleSubmit = async (e: FormEvent) => {
+  //   e.preventDefault()
+  //   setError(null)
 
-    if (!cardRef.current) {
-      setError('Payment form not ready. Please refresh and try again.')
-      return
-    }
+  //   if (!cardRef.current) {
+  //     setError('Payment form not ready. Please refresh and try again.')
+  //     return
+  //   }
 
-    setLoading(true)
-    try {
-      const result = await cardRef.current.tokenize()
+  //   setLoading(true)
+  //   try {
+  //     const result = await cardRef.current.tokenize()
 
-      if (result.status !== 'OK') {
-        setError(result.errors?.[0]?.message ?? 'Card tokenization failed.')
-        return
-      }
+  //     if (result.status !== 'OK') {
+  //       setError(result.errors?.[0]?.message ?? 'Card tokenization failed.')
+  //       return
+  //     }
 
-      const { data, error: fnError } = await supabase.functions.invoke('process-payment', {
-        body: { token: result.token, ...form },
-      })
+  //     const { data, error: fnError } = await supabase.functions.invoke('process-payment', {
+  //       body: { token: result.token, ...form },
+  //     })
 
-      if (fnError || !data?.success) {
-        setError(data?.error ?? 'Payment failed. Please try again.')
-        return
-      }
+  //     if (fnError || !data?.success) {
+  //       setError(data?.error ?? 'Payment failed. Please try again.')
+  //       return
+  //     }
 
-      setSuccess(true)
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
+  //     setSuccess(true)
+  //   } catch (e: unknown) {
+  //     setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
 
   // === UNDER DEVELOPMENT: restore these returns when payment is ready ===
   // if (success) {
