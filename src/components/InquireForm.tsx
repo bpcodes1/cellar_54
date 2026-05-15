@@ -18,14 +18,16 @@ export default function InquireForm() {
     setLoading(true)
     setError(null)
     try {
-      const data = new FormData()
-      Object.entries(form).forEach(([k, v]) => data.append(k, v))
-      data.append('_subject', `Inquiry from ${form.firstName} ${form.lastName}`)
-      await fetch('https://formsubmit.co/info@cellar54salem.com', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        mode: 'no-cors',
-        body: data,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: '4e9faa8a-a5ab-4026-bfb3-52457f9038cf',
+          subject: `Inquiry from ${form.firstName} ${form.lastName}`,
+          ...form,
+        }),
       })
+      if (!res.ok) throw new Error()
       setSuccess(true)
     } catch {
       setError('Something went wrong. Please email us directly at info@cellar54salem.com.')
