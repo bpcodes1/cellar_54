@@ -18,15 +18,14 @@ export default function InquireForm() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('https://formsubmit.co/ajax/info@cellar54salem.com', {
+      const data = new FormData()
+      Object.entries(form).forEach(([k, v]) => data.append(k, v))
+      data.append('_subject', `Inquiry from ${form.firstName} ${form.lastName}`)
+      await fetch('https://formsubmit.co/info@cellar54salem.com', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          _subject: `Inquiry from ${form.firstName} ${form.lastName}`,
-          ...form,
-        }),
+        mode: 'no-cors',
+        body: data,
       })
-      if (!res.ok) throw new Error()
       setSuccess(true)
     } catch {
       setError('Something went wrong. Please email us directly at info@cellar54salem.com.')
