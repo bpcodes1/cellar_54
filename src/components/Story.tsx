@@ -1,4 +1,5 @@
-import openingImg from '../assets/Cellar54_images/Cellar54-opening.webp'
+
+import videoSrc from '../assets/Cellar54_images/cellar54-video.mp4'
 
 const highlights = [
   { title: 'Full-Service Bar', desc: 'We operate the bar. You bring the guests.' },
@@ -30,7 +31,14 @@ export default function Story() {
           </div>
           <div className="story-visual reveal d1">
             <div className="story-img-frame">
-              <img src={openingImg} alt="Cellar 54 opening night" className="story-photo" />
+              <video
+                className="story-photo"
+                src={videoSrc}
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
               <div className="corner tl" />
               <div className="corner tr" />
               <div className="corner bl" />
