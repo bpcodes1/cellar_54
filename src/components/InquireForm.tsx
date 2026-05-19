@@ -84,7 +84,7 @@ export default function InquireForm() {
             </div>
             <div className="form-group">
               <label className="form-label">Phone</label>
-              <input className="form-input" type="tel" name="phone" placeholder="(503) 000-0000" value={form.phone} onChange={handleChange} />
+              <input className="form-input" type="tel" name="phone" placeholder="(503) 000-0000" value={form.phone} onChange={handleChange} required />
             </div>
           </div>
           <div className="form-row">
@@ -101,16 +101,16 @@ export default function InquireForm() {
             </div>
             <div className="form-group">
               <label className="form-label">Estimated Guests</label>
-              <input className="form-input" type="text" name="guests" placeholder="e.g. 100–150" value={form.guests} onChange={handleChange} />
+              <input className="form-input" type="text" name="guests" placeholder="e.g. 100–150" value={form.guests} onChange={handleChange} required />
             </div>
           </div>
           <div className="form-group">
             <label className="form-label">Preferred Date</label>
-            <input className="form-input" type="text" name="date" placeholder="Month / Year, or flexible" value={form.date} onChange={handleChange} />
+            <input className="form-input" type="text" name="date" placeholder="Month / Year, or flexible" value={form.date} onChange={handleChange} required />
           </div>
           <div className="form-group">
             <label className="form-label">Tell us about your event</label>
-            <textarea className="form-input form-textarea" name="message" placeholder="Any details, questions, or special requests..." value={form.message} onChange={handleChange} rows={4} />
+            <textarea className="form-input form-textarea" name="message" placeholder="Any details, questions, or special requests..." value={form.message} onChange={handleChange} rows={4} required />
           </div>
           {error && <p className="form-error">{error}</p>}
           <button type="submit" className="form-submit" disabled={loading}>

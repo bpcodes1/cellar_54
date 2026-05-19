@@ -183,12 +183,12 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
             </div>
             <div className="form-group">
               <label className="form-label">Estimated Guests</label>
-              <input className="form-input" type="text" name="guests" placeholder="e.g. 100–150" value={form.guests} onChange={handleChange} />
+              <input className="form-input" type="text" name="guests" placeholder="e.g. 100–150" value={form.guests} onChange={handleChange} required />
             </div>
           </div>
           <div className="form-group">
             <label className="form-label">Preferred Date</label>
-            <input className="form-input" type="text" name="date" placeholder="Month / Year, or flexible" value={form.date} onChange={handleChange} />
+            <input className="form-input" type="text" name="date" placeholder="Month / Year, or flexible" value={form.date} onChange={handleChange} required />
           </div>
           <div className="form-group">
             <label className="form-label">Card Details — $500 Deposit</label>
