@@ -1,0 +1,34 @@
+Google Calendar 
+    - Changed Access Permissions for Events, Make Available (See only free/busy (hide details)) enabled.
+    - Created Cellar54 Calendar Project in console.cloud.com
+    - Enabled Google Calendar API
+    - Create API Key (Allow communication from cellar54salem calendar to google calendar)
+
+Square
+    - Got Production Variables needed to implement Payment Form
+    - Got Sandbox Variabels needed to Test Payment Form
+    - Sandbox Testing Complete, need to do production testing now
+
+CloudFlare
+    - Added contact@be-techplus.com as Administrator
+    - Created Page Project
+    - Enabled Free Plan for Domain
+    - Deleted Previous Squarespace DNS Records
+    - Updated DNS records to point to CloudFlare Servers
+
+Squarespace
+    - Point Nameserver of Domain to CloudFlare
+    - Still need to initiate transfer of Domain
+
+Web3Forms
+    - Set up with Google Account to automatically send inquiries to info@cellar54salem.com
+    - FYI: Free plan allows for 250 submissions in a month
+
+Gmail
+    - Gmail API was enabled to allow emails sent to client about confirmed booking
+    - Verified that Inquiry Form submission triggers an email thorugh Web3Forms
+    - Verified that Booking Form submission triggers an email through Web3Forms
+
+
+
+

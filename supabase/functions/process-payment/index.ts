@@ -15,7 +15,7 @@ const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET')!
 const GOOGLE_REFRESH_TOKEN = Deno.env.get('GOOGLE_REFRESH_TOKEN')!
 const CALENDAR_ID = 'info@cellar54salem.com'
 
-const ALLOWED_ORIGINS = ['https://cellar54salem.com', 'https://www.cellar54salem.com', 'http://localhost:5173', 'http://localhost:4173']
+const ALLOWED_ORIGINS = ['https://cellar54salem.com', 'https://www.cellar54salem.com']
 
 function corsHeaders(origin: string | null) {
   const allowed = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
@@ -131,8 +131,9 @@ async function sendConfirmationEmail(accessToken: string, booking: {
     `info@cellar54salem.com`,
   ].join('\n')
 
+  const safeName = `${firstName} ${lastName}`.replace(/[\r\n]/g, ' ')
   const raw = [
-    `To: ${firstName} ${lastName} <${email}>`,
+    `To: ${safeName} <${email}>`,
     `From: Cellar 54 <info@cellar54salem.com>`,
     `Subject: ${subject}`,
     `Content-Type: text/plain; charset=utf-8`,
@@ -162,12 +163,9 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Step 1: Parsing request body')
     const body = await req.json()
-    console.log('Step 2: Validating input fields')
     const validationError = validateInput(body)
     if (validationError) {
-      console.log('Validation failed:', validationError)
       return new Response(
         JSON.stringify({ success: false, error: validationError }),
         { status: 400, headers: { ...headers, 'Content-Type': 'application/json' } },
@@ -175,7 +173,6 @@ serve(async (req) => {
     }
 
     const { token, firstName, lastName, email, eventType, guests, date } = body
-    console.log('Step 3: Input valid, attempting Square payment')
 
     const paymentRes = await fetch(`${SQUARE_BASE}/v2/payments`, {
       method: 'POST',
@@ -190,39 +187,24 @@ serve(async (req) => {
       }),
     })
     const paymentData = await paymentRes.json()
-    console.log('Step 4: Square response status:', paymentRes.status)
-    if (!paymentRes.ok) {
-      console.log('Square error:', JSON.stringify(paymentData.errors))
-      throw new Error(paymentData.errors?.[0]?.detail ?? 'Payment failed')
-    }
+    if (!paymentRes.ok) throw new Error(paymentData.errors?.[0]?.detail ?? 'Payment failed')
     const paymentId = paymentData.payment.id
-    console.log('Step 5: Payment successful, payment ID:', paymentId)
 
-    console.log('Step 6: Getting Google access token')
-    console.log('Google client ID present:', !!GOOGLE_CLIENT_ID)
-    console.log('Google client secret present:', !!GOOGLE_CLIENT_SECRET)
-    console.log('Google refresh token present:', !!GOOGLE_REFRESH_TOKEN)
     const accessToken = await getGoogleAccessToken()
-    console.log('Step 7: Creating Google Calendar event')
     const calendarEventId = await createCalendarEvent(accessToken, {
       firstName: firstName.trim(), lastName: lastName.trim(),
       email: email.trim().toLowerCase(), eventType, guests, date, paymentId,
     })
-    console.log('Step 8: Calendar event created, ID:', calendarEventId)
 
-    console.log('Step 9: Sending confirmation email to client')
     await sendConfirmationEmail(accessToken, {
       firstName: firstName.trim(), lastName: lastName.trim(),
       email: email.trim().toLowerCase(), eventType, guests, date, paymentId,
     })
-    console.log('Step 10: Sending notification email to Cellar 54')
     await sendConfirmationEmail(accessToken, {
       firstName: firstName.trim(), lastName: lastName.trim(),
       email: 'info@cellar54salem.com', eventType, guests, date, paymentId,
     })
-    console.log('Step 11: Both emails sent')
 
-    console.log('Step 12: Storing booking in Supabase')
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -238,11 +220,7 @@ serve(async (req) => {
       deposit_paid: DEPOSIT_CENTS,
       status: 'deposit_paid',
     })
-    if (dbError) {
-      console.log('Supabase error:', dbError.message)
-      throw new Error(dbError.message)
-    }
-    console.log('Step 13: Booking stored successfully')
+    if (dbError) throw new Error(dbError.message)
 
     return new Response(
       JSON.stringify({ success: true, paymentId, calendarEventId }),
@@ -250,7 +228,6 @@ serve(async (req) => {
     )
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unexpected error'
-    console.log('CAUGHT ERROR:', message)
     return new Response(
       JSON.stringify({ success: false, error: message }),
       { status: 500, headers: { ...headers, 'Content-Type': 'application/json' } },
