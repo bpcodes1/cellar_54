@@ -14,25 +14,29 @@ async function fetchBookedDates(year: number, month: number): Promise<string[]> 
   const timeMin = new Date(year, month, 1).toISOString()
   const timeMax = new Date(year, month + 1, 1).toISOString()
 
-  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${API_KEY}&timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true`
-
-  const res = await fetch(url)
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/freeBusy?key=${API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        timeMin,
+        timeMax,
+        items: [{ id: CALENDAR_ID }],
+      }),
+    }
+  )
   if (!res.ok) return []
   const data = await res.json()
 
+  const busy: { start: string; end: string }[] = data.calendars?.[CALENDAR_ID]?.busy ?? []
   const booked = new Set<string>()
 
-  for (const event of data.items ?? []) {
-    if (event.start?.date) {
-      // All-day event — end.date is exclusive
-      const start = new Date(event.start.date + 'T00:00:00')
-      const end = new Date(event.end.date + 'T00:00:00')
-      for (const d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-        booked.add(fmt(d.getFullYear(), d.getMonth(), d.getDate()))
-      }
-    } else if (event.start?.dateTime) {
-      // Timed event — mark just the start date
-      booked.add(event.start.dateTime.split('T')[0])
+  for (const { start, end } of busy) {
+    const s = new Date(start)
+    const e = new Date(end)
+    for (const d = new Date(s); d < e; d.setDate(d.getDate() + 1)) {
+      booked.add(fmt(d.getFullYear(), d.getMonth(), d.getDate()))
     }
   }
 

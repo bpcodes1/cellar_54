@@ -1,27 +1,3 @@
-interface BookingProps {
-  selectedDate?: string
-}
-
-export default function Booking({ selectedDate: _selectedDate = '' }: BookingProps) {
-  return (
-    <div className="booking-wrap" id="booking">
-      <div className="booking-inner" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <div className="booking-success reveal">
-          <span className="section-eyebrow">Booking</span>
-          <h2 className="section-title">Under Development</h2>
-          <p>Our online booking is currently under development. Please contact us directly to reserve your date.</p>
-          <a href="/contact" className="form-submit" style={{ display: 'inline-block', marginTop: '24px', textDecoration: 'none' }}>
-            Contact Us for Booking
-          </a>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/*
-  RESTORE WHEN PAYMENT IS READY — uncomment everything below and replace the component above
-
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
@@ -64,6 +40,7 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
   useEffect(() => {
     setForm(f => ({ ...f, date: selectedDate }))
   }, [selectedDate])
+
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -82,7 +59,10 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
           return
         }
         const script = document.createElement('script')
-        script.src = 'https://web.squarecdn.com/v1/square.js'
+        const isSandbox = SQUARE_APP_ID.startsWith('sandbox-')
+        script.src = isSandbox
+          ? 'https://sandbox.web.squarecdn.com/v1/square.js'
+          : 'https://web.squarecdn.com/v1/square.js'
         script.onload = () => resolve()
         script.onerror = reject
         document.head.appendChild(script)
@@ -153,10 +133,10 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
     return (
       <div className="booking-wrap" id="booking">
         <div className="booking-inner">
-          <div className="booking-success reveal">
+          <div className="booking-success">
             <span className="section-eyebrow">You're on the books</span>
             <h2 className="section-title">Date reserved.</h2>
-            <p>Your $500 deposit has been processed and your date is held. We'll be in touch within 24 hours to confirm the details.</p>
+            <p style={{ color: 'var(--grey)', fontSize: '14px', marginTop: '16px', lineHeight: '1.85' }}>Your $500 deposit has been processed and your date is held. We'll be in touch within 24 hours to confirm the details.</p>
           </div>
         </div>
       </div>
@@ -224,4 +204,3 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
     </div>
   )
 }
-*/
