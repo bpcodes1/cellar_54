@@ -104,6 +104,55 @@ async function createCalendarEvent(accessToken: string, booking: {
   return data.id
 }
 
+async function sendConfirmationEmail(accessToken: string, booking: {
+  firstName: string; lastName: string; email: string
+  eventType: string; guests: string; date: string; paymentId: string
+}) {
+  const { firstName, lastName, email, eventType, guests, date, paymentId } = booking
+
+  const subject = 'Booking Confirmed — Cellar 54'
+  const body = [
+    `Hi ${firstName},`,
+    ``,
+    `Your booking at Cellar 54 has been confirmed and your $500 deposit has been processed.`,
+    ``,
+    `Booking Details:`,
+    `  Event Type: ${eventType}`,
+    `  Estimated Guests: ${guests || 'Not specified'}`,
+    `  Preferred Date: ${date}`,
+    `  Payment ID: ${paymentId}`,
+    ``,
+    `We'll be in touch within 24 hours to confirm the details and discuss next steps.`,
+    ``,
+    `Thank you for choosing Cellar 54. We look forward to hosting your event.`,
+    ``,
+    `Cellar 54`,
+    `Lower Level, 285 Liberty St NE · Salem, OR 97301`,
+    `info@cellar54salem.com`,
+  ].join('\n')
+
+  const raw = [
+    `To: ${firstName} ${lastName} <${email}>`,
+    `From: Cellar 54 <info@cellar54salem.com>`,
+    `Subject: ${subject}`,
+    `Content-Type: text/plain; charset=utf-8`,
+    ``,
+    body,
+  ].join('\n')
+
+  const encoded = btoa(unescape(encodeURIComponent(raw)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ raw: encoded }),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error?.message ?? 'Failed to send confirmation email')
+  return data.id
+}
+
 serve(async (req) => {
   const origin = req.headers.get('Origin')
   const headers = corsHeaders(origin)
@@ -161,7 +210,19 @@ serve(async (req) => {
     })
     console.log('Step 8: Calendar event created, ID:', calendarEventId)
 
-    console.log('Step 9: Storing booking in Supabase')
+    console.log('Step 9: Sending confirmation email to client')
+    await sendConfirmationEmail(accessToken, {
+      firstName: firstName.trim(), lastName: lastName.trim(),
+      email: email.trim().toLowerCase(), eventType, guests, date, paymentId,
+    })
+    console.log('Step 10: Sending notification email to Cellar 54')
+    await sendConfirmationEmail(accessToken, {
+      firstName: firstName.trim(), lastName: lastName.trim(),
+      email: 'info@cellar54salem.com', eventType, guests, date, paymentId,
+    })
+    console.log('Step 11: Both emails sent')
+
+    console.log('Step 12: Storing booking in Supabase')
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -181,7 +242,7 @@ serve(async (req) => {
       console.log('Supabase error:', dbError.message)
       throw new Error(dbError.message)
     }
-    console.log('Step 10: Booking stored successfully')
+    console.log('Step 13: Booking stored successfully')
 
     return new Response(
       JSON.stringify({ success: true, paymentId, calendarEventId }),
