@@ -3,7 +3,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const SQUARE_ACCESS_TOKEN = Deno.env.get('SQUARE_ACCESS_TOKEN')!
 const SQUARE_LOCATION_ID = Deno.env.get('SQUARE_LOCATION_ID')!
-const SQUARE_BASE = 'https://connect.squareup.com'
+const SQUARE_ENV = Deno.env.get('SQUARE_ENVIRONMENT') ?? 'production'
+const SQUARE_BASE = SQUARE_ENV === 'sandbox'
+  ? 'https://connect.squareupsandbox.com'
+  : 'https://connect.squareup.com'
 const SQUARE_VERSION = '2024-01-18'
 const DEPOSIT_CENTS = 50000 // $500.00
 
@@ -84,8 +87,8 @@ async function createCalendarEvent(accessToken: string, booking: {
           `Deposit Paid: $500`,
           `Square Payment ID: ${paymentId}`,
         ].join('\n'),
-        start: { date, timeZone: 'America/Los_Angeles' },
-        end: { date, timeZone: 'America/Los_Angeles' },
+        start: { date },
+        end: { date: new Date(new Date(date).getTime() + 86400000).toISOString().split('T')[0] },
       }),
     }
   )
@@ -103,9 +106,12 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Step 1: Parsing request body')
     const body = await req.json()
+    console.log('Step 2: Validating input fields')
     const validationError = validateInput(body)
     if (validationError) {
+      console.log('Validation failed:', validationError)
       return new Response(
         JSON.stringify({ success: false, error: validationError }),
         { status: 400, headers: { ...headers, 'Content-Type': 'application/json' } },
@@ -113,8 +119,8 @@ serve(async (req) => {
     }
 
     const { token, firstName, lastName, email, eventType, guests, date } = body
+    console.log('Step 3: Input valid, attempting Square payment')
 
-    // 1. Charge $500 deposit directly with token
     const paymentRes = await fetch(`${SQUARE_BASE}/v2/payments`, {
       method: 'POST',
       headers: squareHeaders(),
@@ -128,17 +134,27 @@ serve(async (req) => {
       }),
     })
     const paymentData = await paymentRes.json()
-    if (!paymentRes.ok) throw new Error(paymentData.errors?.[0]?.detail ?? 'Payment failed')
+    console.log('Step 4: Square response status:', paymentRes.status)
+    if (!paymentRes.ok) {
+      console.log('Square error:', JSON.stringify(paymentData.errors))
+      throw new Error(paymentData.errors?.[0]?.detail ?? 'Payment failed')
+    }
     const paymentId = paymentData.payment.id
+    console.log('Step 5: Payment successful, payment ID:', paymentId)
 
-    // 2. Create Google Calendar event
+    console.log('Step 6: Getting Google access token')
+    console.log('Google client ID present:', !!GOOGLE_CLIENT_ID)
+    console.log('Google client secret present:', !!GOOGLE_CLIENT_SECRET)
+    console.log('Google refresh token present:', !!GOOGLE_REFRESH_TOKEN)
     const accessToken = await getGoogleAccessToken()
+    console.log('Step 7: Creating Google Calendar event')
     const calendarEventId = await createCalendarEvent(accessToken, {
       firstName: firstName.trim(), lastName: lastName.trim(),
       email: email.trim().toLowerCase(), eventType, guests, date, paymentId,
     })
+    console.log('Step 8: Calendar event created, ID:', calendarEventId)
 
-    // 3. Store booking in Supabase
+    console.log('Step 9: Storing booking in Supabase')
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -154,7 +170,11 @@ serve(async (req) => {
       deposit_paid: DEPOSIT_CENTS,
       status: 'deposit_paid',
     })
-    if (dbError) throw new Error(dbError.message)
+    if (dbError) {
+      console.log('Supabase error:', dbError.message)
+      throw new Error(dbError.message)
+    }
+    console.log('Step 10: Booking stored successfully')
 
     return new Response(
       JSON.stringify({ success: true, paymentId, calendarEventId }),
@@ -162,6 +182,7 @@ serve(async (req) => {
     )
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unexpected error'
+    console.log('CAUGHT ERROR:', message)
     return new Response(
       JSON.stringify({ success: false, error: message }),
       { status: 500, headers: { ...headers, 'Content-Type': 'application/json' } },
