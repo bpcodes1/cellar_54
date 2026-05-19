@@ -34,7 +34,7 @@ function squareHeaders() {
 }
 
 function validateInput(data: Record<string, unknown>): string | null {
-  const { token, firstName, lastName, email, eventType } = data
+  const { token, firstName, lastName, email, eventType, guests, date } = data
   if (!token || typeof token !== 'string' || token.trim().length === 0)
     return 'Missing payment token.'
   if (!firstName || typeof firstName !== 'string' || firstName.trim().length === 0)
@@ -45,9 +45,16 @@ function validateInput(data: Record<string, unknown>): string | null {
     return 'A valid email address is required.'
   if (!eventType || typeof eventType !== 'string' || eventType.trim().length === 0)
     return 'Event type is required.'
+  if (!guests || typeof guests !== 'string' || guests.trim().length === 0)
+    return 'Estimated guests is required.'
+  if (!date || typeof date !== 'string' || date.trim().length === 0)
+    return 'Preferred date is required.'
   if (typeof firstName === 'string' && firstName.length > 100) return 'First name is too long.'
   if (typeof lastName === 'string' && lastName.length > 100) return 'Last name is too long.'
   if (typeof email === 'string' && email.length > 254) return 'Email address is too long.'
+  if (typeof guests === 'string' && guests.length > 50) return 'Guest count is too long.'
+  if (typeof date === 'string' && date.length > 100) return 'Date is too long.'
+  if (typeof eventType === 'string' && eventType.length > 100) return 'Event type is too long.'
   return null
 }
 
