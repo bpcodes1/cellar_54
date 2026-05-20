@@ -41,7 +41,6 @@ export default function Events() {
             <span className="section-eyebrow">What We Host</span>
             <h2 className="section-title">Every event.<br /><em>One space.</em></h2>
           </div>
-          <a href="#" className="link-subtle">See all event types &rarr;</a>
         </div>
         <div className="events-grid">
           {events.map((ev, i) => (

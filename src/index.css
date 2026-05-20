@@ -576,6 +576,22 @@ section { padding: 100px 32px; max-width: 1200px; margin: 0 auto; }
   font-size: 11px; color: var(--red);
   letter-spacing: 0.05em; margin: 0;
 }
+.form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.form-label-row .form-label { margin-bottom: 0; }
+.powered-by-square {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--grey);
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+}
 .sq-card-input {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.1);

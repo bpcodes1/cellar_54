@@ -21,7 +21,6 @@ export default function Gallery() {
             <span className="section-eyebrow">The Gallery</span>
             <h2 className="section-title">See it <em>in the light.</em></h2>
           </div>
-          <a href="#" className="link-subtle">Full gallery &rarr;</a>
         </div>
         <div className="gallery-grid">
           {thumbs.map((t) => (

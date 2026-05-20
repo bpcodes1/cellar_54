@@ -191,14 +191,24 @@ export default function Booking({ selectedDate = '' }: BookingProps) {
             <input className="form-input" type="text" name="date" placeholder="Month / Year, or flexible" value={form.date} onChange={handleChange} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Card Details — $500 Deposit</label>
+            <div className="form-label-row">
+              <label className="form-label">Card Details — $500 Deposit</label>
+              <span className="powered-by-square">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="24" height="24" rx="4" fill="#000000"/>
+                  <rect x="5" y="5" width="14" height="14" rx="2" fill="white"/>
+                  <rect x="9" y="9" width="6" height="6" rx="1" fill="#000000"/>
+                </svg>
+                Powered by Square
+              </span>
+            </div>
             <div id="sq-card-container" className="sq-card-input" />
           </div>
           {error && <p className="form-error">{error}</p>}
           <button type="submit" className="form-submit" disabled={loading}>
             {loading ? 'Processing...' : 'Reserve My Date — $500 Deposit'}
           </button>
-          <p className="form-note">Deposit applied toward your total. Secure payment via Square. Remaining balance due prior to your event.</p>
+          <p className="form-note">&#128274; Secure payment powered by Square. Your card information is encrypted and never stored on our servers. Deposit applied toward your total. Remaining balance due prior to your event.</p>
         </form>
       </div>
     </div>
