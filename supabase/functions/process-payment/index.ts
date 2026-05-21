@@ -7,7 +7,7 @@ const SQUARE_ENV = Deno.env.get('SQUARE_ENVIRONMENT') ?? 'production'
 const SQUARE_BASE = SQUARE_ENV === 'sandbox'
   ? 'https://connect.squareupsandbox.com'
   : 'https://connect.squareup.com'
-const SQUARE_VERSION = '2024-01-18'
+const SQUARE_VERSION = '2025-01-23'
 const DEPOSIT_CENTS = 50000 // $500.00
 
 const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID')!
@@ -58,6 +58,16 @@ function validateInput(data: Record<string, unknown>): string | null {
   return null
 }
 
+// Returns a YYYY-MM-DD string if the input can be parsed as a date, otherwise null.
+// Accepts ISO dates directly; also tries JS Date parsing for inputs like "June 2026".
+// Returns null for freeform strings like "Flexible" that can't be resolved to a date.
+function parseCalendarDate(dateStr: string): string | null {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return null
+  return d.toISOString().split('T')[0]
+}
+
 async function getGoogleAccessToken(): Promise<string> {
   const res = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
@@ -79,6 +89,12 @@ async function createCalendarEvent(accessToken: string, booking: {
   eventType: string; guests: string; date: string; paymentId: string
 }) {
   const { firstName, lastName, email, eventType, guests, date, paymentId } = booking
+
+  const calDate = parseCalendarDate(date)
+  if (!calDate) throw new Error(`Cannot parse "${date}" as a calendar date — skipping calendar event`)
+
+  const nextDay = new Date(new Date(calDate).getTime() + 86400000).toISOString().split('T')[0]
+
   const res = await fetch(
     `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events`,
     {
@@ -94,8 +110,8 @@ async function createCalendarEvent(accessToken: string, booking: {
           `Deposit Paid: $500`,
           `Square Payment ID: ${paymentId}`,
         ].join('\n'),
-        start: { date },
-        end: { date: new Date(new Date(date).getTime() + 86400000).toISOString().split('T')[0] },
+        start: { date: calDate },
+        end: { date: nextDay },
       }),
     }
   )
@@ -174,6 +190,7 @@ serve(async (req) => {
 
     const { token, firstName, lastName, email, eventType, guests, date } = body
 
+    // 1. Charge the deposit — if this fails, nothing else runs
     const paymentRes = await fetch(`${SQUARE_BASE}/v2/payments`, {
       method: 'POST',
       headers: squareHeaders(),
@@ -190,29 +207,25 @@ serve(async (req) => {
     if (!paymentRes.ok) throw new Error(paymentData.errors?.[0]?.detail ?? 'Payment failed')
     const paymentId = paymentData.payment.id
 
-    const accessToken = await getGoogleAccessToken()
-    const calendarEventId = await createCalendarEvent(accessToken, {
-      firstName: firstName.trim(), lastName: lastName.trim(),
-      email: email.trim().toLowerCase(), eventType, guests, date, paymentId,
-    })
+    const bookingData = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim().toLowerCase(),
+      eventType,
+      guests,
+      date,
+      paymentId,
+    }
 
-    await sendConfirmationEmail(accessToken, {
-      firstName: firstName.trim(), lastName: lastName.trim(),
-      email: email.trim().toLowerCase(), eventType, guests, date, paymentId,
-    })
-    await sendConfirmationEmail(accessToken, {
-      firstName: firstName.trim(), lastName: lastName.trim(),
-      email: 'info@cellar54salem.com', eventType, guests, date, paymentId,
-    })
-
+    // 2. Save to DB immediately after payment — this is the source of truth
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     )
     const { error: dbError } = await supabase.from('bookings').insert({
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      email: email.trim().toLowerCase(),
+      first_name: bookingData.firstName,
+      last_name: bookingData.lastName,
+      email: bookingData.email,
       event_type: eventType,
       guests,
       event_date: date,
@@ -221,6 +234,37 @@ serve(async (req) => {
       status: 'deposit_paid',
     })
     if (dbError) throw new Error(dbError.message)
+
+    // 3. Calendar and emails are best-effort — payment and DB record are already secured.
+    // Failures here are logged but do not surface as errors to the customer.
+    let calendarEventId: string | null = null
+    let googleAccessToken: string | null = null
+
+    try {
+      googleAccessToken = await getGoogleAccessToken()
+    } catch (e) {
+      console.error('Google auth failed:', e)
+    }
+
+    if (googleAccessToken) {
+      try {
+        calendarEventId = await createCalendarEvent(googleAccessToken, bookingData)
+      } catch (e) {
+        console.error('Calendar event failed:', e)
+      }
+
+      try {
+        await sendConfirmationEmail(googleAccessToken, bookingData)
+      } catch (e) {
+        console.error('Customer confirmation email failed:', e)
+      }
+
+      try {
+        await sendConfirmationEmail(googleAccessToken, { ...bookingData, email: 'info@cellar54salem.com' })
+      } catch (e) {
+        console.error('Venue notification email failed:', e)
+      }
+    }
 
     return new Response(
       JSON.stringify({ success: true, paymentId, calendarEventId }),
