@@ -15,7 +15,7 @@ const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET')!
 const GOOGLE_REFRESH_TOKEN = Deno.env.get('GOOGLE_REFRESH_TOKEN')!
 const CALENDAR_ID = 'info@cellar54salem.com'
 
-const ALLOWED_ORIGINS = ['https://cellar54salem.com', 'https://www.cellar54salem.com', 'http://localhost:5173']
+const ALLOWED_ORIGINS = ['https://cellar54salem.com', 'https://www.cellar54salem.com']
 
 function corsHeaders(origin: string | null) {
   const allowed = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
