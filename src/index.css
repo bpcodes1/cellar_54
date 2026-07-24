@@ -316,6 +316,51 @@ section { padding: 100px 32px; max-width: 1200px; margin: 0 auto; }
   color: var(--ivory); line-height: 1.4;
 }
 
+/* ─── COMEDY NIGHT ─── */
+.comedy-wrap { background: var(--black); }
+.comedy-section {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+.comedy-body {
+  margin-top: 24px;
+  color: var(--grey); font-size: 14px;
+  line-height: 1.85;
+  max-width: 460px;
+}
+.comedy-details {
+  display: flex; gap: 32px;
+  margin-top: 36px; padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.comedy-detail-item { display: flex; flex-direction: column; gap: 4px; }
+.comedy-detail-label {
+  font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--red);
+}
+.comedy-detail-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; color: var(--ivory);
+}
+.comedy-cta { margin-top: 40px; }
+.comedy-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  height: 360px;
+}
+.comedy-photo { position: relative; overflow: hidden; }
+.comedy-photo-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transition: transform 0.5s ease;
+}
+.comedy-photo:hover .comedy-photo-bg { transform: scale(1.05); }
+.comedy-photo.cn1 { grid-row: span 2; }
+.comedy-photo.cn2 { grid-column: 2; grid-row: 1; }
+.comedy-photo.cn3 { grid-column: 2; grid-row: 2; }
+
 /* ─── EVENTS ─── */
 .events-wrap {
   background: var(--black);
@@ -743,6 +788,8 @@ footer { background: var(--deep); }
   section { padding: 80px 28px; }
   .story-section { grid-template-columns: 1fr; gap: 0; }
   .story-visual { display: block; margin-top: 40px; }
+  .comedy-section { grid-template-columns: 1fr; gap: 0; }
+  .comedy-photos { margin-top: 40px; height: 300px; }
   .events-wrap { padding: 80px 0; }
   .events-inner { padding: 0 28px; }
   .events-grid { grid-template-columns: repeat(2, 1fr); }
