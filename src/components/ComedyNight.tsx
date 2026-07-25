@@ -2,7 +2,7 @@ import comedy1 from '../assets/Cellar54_images/Cellar54-comedy1.webp'
 import comedy2 from '../assets/Cellar54_images/Cellar54-comedy2.webp'
 import comedy3 from '../assets/Cellar54_images/Cellar54-comedy3.webp'
 
-const TICKETS_URL = 'https://tickets.willamettevalleylaughs.com/events/willamettevalleylaughs/2286359'
+const TICKETS_URL = 'https://tickets.willamettevalleylaughs.com/'
 
 const details = [
   { label: 'Doors', value: '6:30 PM' },
