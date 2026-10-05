@@ -22,7 +22,7 @@ export default function InquireForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          access_key: '4e9faa8a-a5ab-4026-bfb3-52457f9038cf',
+          access_key: 'c37a2bea-9f40-43ee-90bf-04fea2b69619',
           subject: `Inquiry from ${form.firstName} ${form.lastName}`,
           ...form,
         }),
