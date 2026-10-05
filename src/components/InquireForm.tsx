@@ -30,7 +30,7 @@ export default function InquireForm() {
       if (!res.ok) throw new Error()
       setSuccess(true)
     } catch {
-      setError('Something went wrong. Please email us directly at info@cellar54salem.com.')
+      setError('Something went wrong. Please email us directly at inquiries@forgesalem.com.')
     } finally {
       setLoading(false)
     }

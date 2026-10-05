@@ -3,7 +3,6 @@ import ScrollToTop from './components/ScrollToTop'
 import { useScrollReveal } from './hooks/useScrollReveal'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
-import ComedyNight from './components/ComedyNight'
 import StatsBar from './components/StatsBar'
 import Story from './components/Story'
 import Events from './components/Events'
@@ -22,7 +21,6 @@ function HomePage() {
     <>
       <Nav />
       <Hero />
-      <ComedyNight />
       <StatsBar />
       <Story />
       <Events />

@@ -1,7 +1,7 @@
 const locations = [
   { label: 'Address', value: 'Lower Level, 285 Liberty St NE · Salem, OR 97301' },
   { label: 'Parking', value: 'Free — Chemeketa Parkade (connected to The Forge)' },
-  { label: 'Contact', value: 'events@cellar54salem.com' },
+  { label: 'Contact', value: 'inquiries@forgesalem.com' },
   { label: 'Hours', value: 'By Appointment & Event Booking' },
 ]
 

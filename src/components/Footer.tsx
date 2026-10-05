@@ -30,7 +30,7 @@ export default function Footer() {
           <div>
             <div className="footer-col-title">Connect</div>
             <ul className="footer-links">
-              <li><a href="mailto:info@cellar54salem.com">Inquire Now</a></li>
+              <li><a href="mailto:inquiries@forgesalem.com">Inquire Now</a></li>
               <li><a href="tel:19713747357">971-374-7357</a></li>
               <li><a href="#">FAQ</a></li>
               <li><a href="https://www.instagram.com/cellar_54/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
