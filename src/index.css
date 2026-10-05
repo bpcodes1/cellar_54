@@ -959,6 +959,21 @@ footer { background: var(--deep); }
   font-size: 18px; color: var(--ivory);
 }
 
+/* Bookings paused notice */
+.bp-closed-notice {
+  margin-top: 32px;
+  background: rgba(255,18,16,0.08);
+  border: 1px solid rgba(255,18,16,0.25);
+  padding: 24px 28px;
+  text-align: center;
+}
+.bp-closed-text {
+  margin-top: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; color: var(--ivory);
+  line-height: 1.5;
+}
+
 .bp-divider {
   max-width: 860px; margin: 0 auto;
   border-top: 1px solid rgba(255,255,255,0.06);
