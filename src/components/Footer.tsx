@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 export default function Footer() {
   return (
     <footer>
@@ -15,7 +13,6 @@ export default function Footer() {
               <li><a href="#space">The Space</a></li>
               <li><a href="#gallery">Gallery</a></li>
               <li><a href="#amenities">Amenities</a></li>
-              <li><Link to="/booking">Book Now</Link></li>
             </ul>
           </div>
           <div>
