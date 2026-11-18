@@ -9,10 +9,8 @@ import Events from './components/Events'
 import Gallery from './components/Gallery'
 import Amenities from './components/Amenities'
 import Testimonial from './components/Testimonial'
-import InquireForm from './components/InquireForm'
 import LocationBar from './components/LocationBar'
 import Footer from './components/Footer'
-import BookingPage from './pages/BookingPage'
 
 function HomePage() {
   useScrollReveal()
@@ -27,7 +25,6 @@ function HomePage() {
       <Gallery />
       <Amenities />
       <Testimonial />
-      <InquireForm />
       <LocationBar />
       <Footer />
     </>
@@ -40,7 +37,6 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/booking" element={<BookingPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
